@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+{% if todos %}
+    <table>
+    {% for todo in todos %}
+        <tr>
+            <td> <input name="todo_{{todo.id}}" type="checkbox"/></td>
+            <td>{{ todo.todo_text }}</td>
+            <td>{{ todo.expire }}</td>
+            <td>{{ todo.done }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% else %}
+    <p>No todo list</p>
+{% endif %}
+</body>
+</html>

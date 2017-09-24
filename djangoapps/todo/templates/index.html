@@ -1,23 +1,74 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'todo/normalize.css' %}">
+    <link rel="stylesheet" href="{% static 'todo/style.css' %}">
     <title></title>
 </head>
 <body>
-{% if todos %}
-    <table>
-    {% for todo in todos %}
-        <tr>
-            <td> <input name="todo_{{todo.id}}" type="checkbox"/></td>
-            <td>{{ todo.todo_text }}</td>
-            <td>{{ todo.expire }}</td>
-            <td>{{ todo.done }}</td>
-        </tr>
-    {% endfor %}
-    </table>
-{% else %}
-    <p>No todo list</p>
-{% endif %}
+    <div class="header">
+
+    </div>
+    <div class="container">
+    {% if todos %}
+        <table>
+            <tr>
+                <th>TODO</th>
+                <th>EXPIRE</th>
+                <th>DONE</th>
+                <th>ACTION</th>
+            </tr>
+        {% for todo in todos %}
+            <tr>
+                <td><input type="checkbox" name="todo" id="todo{{ forloop.counter }}" value="{{ todo.id }}" ></input>{{ todo.todo_text }}</td>
+                <td class="datetime">{{ todo.expire }}</td>
+                <td class="datetime">{{ todo.done }}</td>
+                <td class="action">
+                    <input type="button" class="editbutton" value="EDIT" data-todoid="{{ todo.id }}">
+                    <input type="button" class="deletebutton" value="DELETE" data-todoid="{{ todo.id }}">
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+    {% else %}
+        <p>No todo list</p>
+    {% endif %}
+        <hr>
+        <form method="post" action="{% url 'todo:append' %}">
+            {% csrf_token %}
+            <input type="text" name="todo">
+            <input type="submit" value="追加">
+        </form>
+    </div>
+    <script src="{% static 'todo/umbrella.min.js' %}"></script>
+    <script>
+        "use strict";
+        u(document).on('DOMContentLoaded', function() {
+            var delete_todo = function(todo_id) {
+                return new Promise(function(resolv, reject) {
+                    const url = '{% url "todo:delete" %}?id=' + todo_id
+                    ajax(url, {}, function(err, data) {
+                        if (err) {
+                            reject(err)
+                        }
+                        resolv(data)
+                    });
+                })
+            }
+            u('.editbutton').handle('click',  function(e) {
+            });
+            u('.deletebutton').handle('click',  function(e) {
+                const target = u(this);
+                const todo_id = target.data('todoid')
+                delete_todo(todo_id).then(function(data) {
+                    target.parent().parent().empty();
+                }).catch(function(err) {
+                    console.log(err);
+                });
+            });
+        });
+    </script>
 </body>
 </html>

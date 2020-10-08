@@ -9,7 +9,7 @@ class Todo(models.Model):
 
 
 class Expire(models.Model):
-    todo = models.OneToOneField(Todo)
+    todo = models.OneToOneField(Todo, on_delete=models.PROTECT)
     expire = models.DateTimeField()
 
     def __str__(self):
@@ -17,7 +17,7 @@ class Expire(models.Model):
 
 
 class Done(models.Model):
-    todo = models.OneToOneField(Todo)
+    todo = models.OneToOneField(Todo, on_delete=models.PROTECT)
     done = models.DateTimeField()
 
     def __str__(self):
